@@ -1,0 +1,91 @@
+{{template "top.html" .}}
+<section class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                {{ if eq .UserForm.Type "edit" }}
+                <h4>User Edit</h4>
+                {{ else if eq .UserForm.Type "new" }}
+                <h4>New User</h4>
+                {{ end }}
+            </div>
+            <div class="card-body">
+                <p><a href="/system/users"><i class="fa fa-angle-left"></i> user list</a></p>
+                <hr>
+                {{ if .UserForm.Show }}
+                <form action="/system/users/save" method="POST" class="form form-horizontal">
+                    <div class="form-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label>Login</label>
+                            </div>
+                            <div class="col-md-8 form-group">
+                                <input type="text" id="login" class="form-control" name="login" value="{{ .Data.Login }}" placeholder="Login">
+                            </div>
+                            <div class="col-md-4">
+                                <label>Fullname</label>
+                            </div>
+                            <div class="col-md-8 form-group">
+                                <input type="text" id="fullname" class="form-control" name="fullname" value="{{ .Data.Fullname }}" placeholder="Fullname">
+                            </div>
+                            <div class="col-md-4">
+                                <label>Email</label>
+                            </div>
+                            <div class="col-md-8 form-group">
+                                <input type="email" id="email" class="form-control" name="email" value="{{ .Data.Email }}" placeholder="Email">
+                            </div>
+                            <div class="col-md-4">
+                                <label>Password</label>
+                            </div>
+                            <div class="col-md-8 form-group">
+                                <input type="password" id="password" class="form-control" name="password" placeholder="Password">
+                            </div>
+                            <div class="col-md-4">
+                                <label>Permission</label>
+                            </div>
+                            <div class="col-md-8 form-group">
+                                <div class="form-check">
+                                    <div class="checkbox">
+                                        <input type="checkbox" id="checkbox1" class="form-check-input" name="permissions[]" value="id_user" {{ if eq .Data.Id_user 1 }}checked=""{{ end }}>
+                                        <label for="checkbox1">id_user</label>
+                                    </div>
+                                </div>
+                                <div class="form-check">
+                                    <div class="checkbox">
+                                        <input type="checkbox" id="checkbox2" class="form-check-input" name="permissions[]" value="id_editor" {{ if eq .Data.Id_editor 1 }}checked=""{{ end }}>
+                                        <label for="checkbox2">id_editor</label>
+                                    </div>
+                                </div>
+                                <div class="form-check">
+                                    <div class="checkbox">
+                                        <input type="checkbox" id="checkbox3" class="form-check-input" name="permissions[]" value="id_admin" {{ if eq .Data.Id_admin 1 }}checked=""{{ end }}>
+                                        <label for="checkbox3">id_admin</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-md-8 offset-md-4 form-group">
+                                <div class="form-check">
+                                    <div class="checkbox">
+                                        <input type="checkbox" id="checkbox4" class="form-check-input" name="enabled" value="1" {{ if eq .Data.Enabled 1 }}checked=""{{ end }}>
+                                        <label for="checkbox4">User is active </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-md-8 offset-md-4 form-group">
+                                <input type="hidden" name="user" value="{{ .Data.Id }}">
+                                <input type="hidden" name="action" value="{{ .UserForm.Type }}">
+                                <button type="submit" class="btn btn-primary me-1 mb-1"><i class="fa fa-floppy-o"></i> &nbsp; Save</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                {{ else }}
+                    <p>User not found.</p>
+                {{ end }}
+            </div>
+        </div>
+    </div>
+</section>
+{{template "bottom.html" .}}

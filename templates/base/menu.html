@@ -1,0 +1,20 @@
+<ul>
+    {{ range . }}
+        {{ if eq .MenuType "single" }}
+        <li class="menu-item  ">
+            <a href="{{ .Url }}" class='menu-link'><i class="fa fa-{{ .Icon }}"></i><span>{{ .Name }}</span></a>
+        </li>
+        {{ else if eq .MenuType "multi" }}
+        <li class="menu-item  has-sub">
+            <a href="#" class='menu-link'><i class="fa fa-{{ .Icon }}"></i><span>{{ .Name }}</span></a>
+            <div class="submenu"><div class="submenu-group-wrapper">
+                <ul class="submenu-group">
+                    {{ range .Childs }}
+                        <li class="submenu-item"><a href="{{ .Url }}" class='submenu-link'><i class="fa fa-{{ .Icon }}"></i> {{ .Name }}</a></li>
+                    {{ end }}
+                </ul>
+            </div></div>
+        </li>
+        {{ end }}
+    {{ end }}
+</ul>

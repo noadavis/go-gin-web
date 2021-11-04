@@ -1,0 +1,28 @@
+{{template "top.html" .}}
+<section class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>User Info</h4>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-borderless mb-0">
+                        <tr><td width="20%">Id</td><td>{{ .Data.Id }}</td></tr>
+                        <tr><td width="20%">Login</td><td>{{ .Data.Login }}</td></tr>
+                        <tr><td width="20%">Fullname</td><td>{{ .Data.Fullname }}</td></tr>
+                        <tr><td width="20%">Email</td><td>{{ .Data.Email }}</td></tr>
+                        <tr><td width="20%">Permissions</td><td>
+                            <strong>
+                            {{ if eq .Data.Id_user 1 }}<span title="User">U</span>{{ end }}
+                            {{ if eq .Data.Id_editor 1 }}<span title="Editor">E</span>{{ end }}
+                            {{ if eq .Data.Id_admin 1 }}<span title="Admin">A</span>{{ end }}
+                            </strong>
+                        </td></tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{{template "bottom.html" .}}

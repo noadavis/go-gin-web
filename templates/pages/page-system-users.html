@@ -1,0 +1,90 @@
+{{template "top.html" .}}
+<section class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>User List</h4>
+            </div>
+            <div class="card-body">
+                <p><a class="btn btn-primary" href="/system/users/new"><i class="fa fa-user"></i> New user</a></p>
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead><tr>
+                            <th width="200px">#</th>
+                            <th>Fullname</th>
+                            <th>Permissions</th>
+                            <th>Status</th>
+                        </tr></thead>
+                        <tbody>
+                            {{ range .Data }}
+                            <tr id="tr_{{ .Id }}">
+                                <td><a class="btn btn-primary btn-sm" title="Edit user" href="/system/users/edit/{{ .Id }}"><i class="fa fa-pencil"></i></a> &nbsp;
+                                    <a class="btn btn-primary btn-sm" onclick="showStatus(1, {{ .Id }}); return false;" title="User info" href="#"><i class="fa fa-info"></i></a> &nbsp;
+                                    <a class="btn btn-primary btn-sm" onclick="showStatus(2, {{ .Id }}); return false;" title="Enable/Block user" href="#"><i class="fa fa-times"></i></a> &nbsp;
+                                    <a class="btn btn-danger btn-sm" onclick="showStatus(3, {{ .Id }}); return false;" title="Delete user" href="#"><i class="fa fa-trash"></i></a></td>
+                                <td>{{ .Fullname }}</td>
+                                <td><strong>{{ if eq .Id_user 1 }}<span title="User">U</span>{{ end }}
+                                    {{ if eq .Id_editor 1 }}<span title="Editor">E</span>{{ end }}
+                                    {{ if eq .Id_admin 1 }}<span title="Admin">A</span>{{ end }}</strong></td>
+                                <td><strong><span id="en_{{ .Id }}">{{ if eq .Enabled 0 }}<i class="fa fa-lock"></i>{{ else }}<i class="fa fa-unlock fa-gray"></i>{{ end }}</span></strong></td>
+                            </tr>
+                            {{ end }}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<link rel="stylesheet" type="text/css" href="/static/css/sweetalert.css">
+<script type="text/javascript" src="/static/js/jquery.min.js"></script>
+<script type="text/javascript" src="/static/js/sweetalert2.min.js"></script>
+<script>
+    // $(document).ready(function() {
+    //     //
+    // });
+    function showStatus(actionId, userId) {
+        let block = "0";
+        if (actionId == 2) {
+            if ($("#en_"+userId).html() == "<i class=\"fa fa-lock\"></i>") {
+                block = "0";
+            } else {
+                block = "1";
+            }
+        }
+        $.ajax({
+            type: "GET",
+            url: "/system/users/"+actionId+"/"+userId+"/"+block,
+            success: function(answer) {
+                if (actionId == 1) {
+                    showStatusModalInfo(answer);
+                } else if (actionId == 2) {
+                    if (!answer.error) {
+                        if (block == "0") $("#en_"+userId).html("<i class=\"fa fa-unlock fa-gray\"></i>");
+                        else $("#en_"+userId).html("<i class=\"fa fa-lock\"></i>");
+                    }
+                } else if (actionId == 3) {
+                    if (!answer.error) $("#tr_"+userId).remove();
+                }
+            }
+        });
+        return false;
+    }
+    function showStatusModalInfo(obj) {
+        var value = `<table width="100%"><tr><td width="50%">Id</td><td>${obj.Id}</td></tr>
+            <tr><td>Username</td><td>${obj.Login}</td></tr>
+            <tr><td>Fullname</td><td>${obj.Fullname}</td></tr>
+            <tr><td>Email</td><td>${obj.Email}</td></tr>
+            <tr><td>id_user</td><td>${obj.Id_user}</td></tr>
+            <tr><td>id_editor</td><td>${obj.Id_editor}</td></tr>
+            <tr><td>id_admin</td><td>${obj.Id_admin}</td></tr>
+            <tr><td>Enabled</td><td>${obj.Enabled}</td></tr></table>`;
+      	swal.fire({
+            html: value,
+            title: "User info",
+            confirmButtonText: "Close"
+        });
+    }
+    
+</script>
+{{template "bottom.html" .}}

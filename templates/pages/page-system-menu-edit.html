@@ -1,0 +1,16 @@
+{{template "top.html" .}}
+<section class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Edit menu [ {{ if ne .Data.Icon "" }}<i class="fa fa-{{ .Data.Icon }}"></i>{{ end }} {{ .Data.Name }} ]</h4>
+            </div>
+            <div class="card-body">
+                <p><a href="/system/menu"><i class="fa fa-angle-left"></i> menu list</a></p>
+                <hr>
+                <p>edtior in development</p>
+            </div>
+        </div>
+    </div>
+</section>
+{{template "bottom.html" .}}

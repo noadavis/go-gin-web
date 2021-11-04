@@ -1,0 +1,16 @@
+{
+    "db": {
+        "Address": "127.0.0.1",
+        "Port": 3306,
+        "Name": "gin",
+        "User": "user",
+        "Password": "password"
+    },
+    "app": {
+        "Salt": "salt",
+        "CookieLifetime": 86400,
+        "Port": 8080,
+        "FullName": "GIN Web",
+        "ShortName": "GIN"
+    }
+}

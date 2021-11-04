@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ .AppData.FullName }}</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.css">
+    <link rel="stylesheet" href="/static/css/app.css">
+    <link rel="stylesheet" href="/static/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/css/other.css">
+    <link rel="shortcut icon" href="/static/favicon.png" />
+</head>
+
+<body>
+    <div id="app">
+        <div id="main" class="layout-horizontal">
+            <header class="mb-4">
+                <div class="header-top">
+                    <div class="container">
+                        <div class="logo">
+                            <a href="/"><i class="fa fa-users"></i> {{ .AppData.FullName }}</a>
+                        </div>
+                        <div class="header-top-right">
+                            {{ if .AppData.UserAuth }}
+                            <a href="/auth/logout"><i class="fa fa-sign-out fs-4"></i>Log out ({{ .AppData.UserData.Login }})</a>
+                            {{ else }}
+                            <a href="/auth/login"><i class="fa fa-sign-in fs-4"></i>Log in</a>
+                            <a href="/auth/register"><i class="fa fa-user fs-4"></i>Sign up</a>
+                            {{ end }}
+                            <a href="#" class="burger-btn"><i class="fa fa-bars fs-4"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <nav class="main-navbar">
+                    <div class="container">
+                        {{template  "menu.html" .AppData.Menu}}
+                    </div>                    
+                </nav>
+            </header>
+
+            <div class="content-wrapper container">
+                
+                {{ if ne .AppData.PageTitle "" }}
+                <div class="page-heading">
+                    <h3><i class="fa fa-{{ .AppData.PageIcon }}"></i> {{ .AppData.PageTitle }}</h3>
+                </div>
+                {{ end }}
+                <div class="page-content">

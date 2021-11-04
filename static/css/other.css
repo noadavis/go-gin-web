@@ -1,0 +1,57 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Arial;
+}
+.header-top-right a {
+    padding-right: 25px;
+}
+.page-heading i, .submenu-item i {
+    padding-right: 15px;
+}
+.header-top-right i {
+    padding-right: 10px;
+}
+.fa-gray {
+    color: #cccccc;
+}
+.logo a, .auth-logo a {
+    font-size: 175%;
+    font-weight: bold;
+    color: #25396f;
+}
+.row_hidden td {
+    color: #aaaaaa;
+}
+td.name i {
+    width: 30px;
+}
+.menu-link i {
+    padding-top: 5px;
+}
+.form-check .checkbox {
+    padding: 10px 0;
+}
+.alert-dismissible .btn-show {
+    padding: 1.25rem 1rem;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 2;
+    width: 60px;
+}
+.editmenu-item {
+    padding-right: 20px;
+    width: 200px;
+    display: inline-block;
+}
+.editmenu-item i {
+    width: 20px;
+    text-align: center;
+    margin-right: 15px;
+}
+.editmenu-button {
+    width: 55px;
+    display: inline-block;
+}
+.editmenu-disabled {
+    color: #aaaaaa;
+}

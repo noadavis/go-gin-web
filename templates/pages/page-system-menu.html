@@ -1,0 +1,32 @@
+{{template "top.html" .}}
+<section class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Menu List</h4>
+            </div>
+            <div class="card-body">
+                {{ range .Data }}
+                <div class="alert alert-primary alert-dismissible{{ if ne .Enabled 1 }} editmenu-disabled{{ end }}">
+                    <p>
+                        <span class="editmenu-button"><a title="Edit menu" class="btn btn-light btn-sm" href="/system/menu/{{.Id}}"><i class="fa fa-pencil"></i></a></span>
+                        <span class="editmenu-item"><strong>{{ if ne .Icon "" }}<i class="fa fa-{{ .Icon }}"></i>{{ end }}{{ .Name }}</strong></span>
+                        {{ if eq .MenuType "single" }}<span>[ {{ .Url }} ]</span>{{ end }}
+                    </p>
+                    <span class="btn-show" title="Order">{{ .Ordering }}</span>
+                </div>
+                    {{$ParentId := .Id}}{{ range .Childs }}
+                    <div style="margin-left: 60px;" class="alert alert-secondary alert-dismissible{{ if ne .Enabled 1 }} editmenu-disabled{{ end }}">
+                        <p>
+                            <span class="editmenu-item"><strong>{{ if ne .Icon "" }}<i class="fa fa-{{ .Icon }}"></i>{{ end }}{{ .Name }}</strong></span>
+                            <span>[ {{ .Url }} ]</span>
+                        </p>
+                        <span class="btn-show" title="Order">{{ .Ordering }}</span>
+                    </div>
+                    {{ end }}
+                {{ end }}
+            </div>
+        </div>
+    </div>
+</section>
+{{template "bottom.html" .}}
