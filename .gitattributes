@@ -1,1 +1,3 @@
+templates/auth/* linguist-vendored
+templates/base/* linguist-vendored
 static/* linguist-vendored
