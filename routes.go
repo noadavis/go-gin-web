@@ -11,14 +11,14 @@ func InitRoutePaths() {
 	// add middleware
 	router.Use(middleware.SessionAuthMiddleware())
 
-	// static files: js, css, images in static folder
+	// static files: js, css, images in "./static" folder
 	router.Static("/static", "./static")
 
 	// handle index route
 	router.GET("/", handlers.ShowIndexPage)
 	router.GET("/permission", handlers.ShowPermissionPage)
 
-	// Handle auth route
+	// handle auth route
 	authRoutes := router.Group("/auth")
 	authRoutes.GET("/login", handlers.ShowLoginPage)
 	authRoutes.GET("/logout", handlers.Logout)
@@ -30,8 +30,9 @@ func InitRoutePaths() {
 	userRoutes.GET("/info", handlers.ShowUserInfoPage)
 	userRoutes.GET("/user", handlers.ShowUserPage)
 	userRoutes.GET("/editor", handlers.ShowEditorPage)
+	userRoutes.POST("/edituserinfo", handlers.ShowUserPage_EditInfo)
 
-	// handle user route
+	// handle system route
 	systemnRoutes := router.Group("/system")
 	systemnRoutes.GET("/users", handlers.SystemUsersPage)
 	systemnRoutes.GET("/menu", handlers.SystemMenuPage)

@@ -2,6 +2,7 @@ package models
 
 import (
 	"fmt"
+	"log"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
@@ -13,12 +14,14 @@ var props ConfigManager
 func InitDb() bool {
 	var err error
 	params := getConnectionString()
-	// fmt.Println(fmt.Sprintf("db connection params: %s", params))
+	// log.Println(fmt.Sprintf("db connection params: %s", params))
 	conn, err = sqlx.Connect("mysql", params)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
+		log.Println("no db connection")
 		return false
 	}
+	log.Println("db connected")
 	return true
 }
 

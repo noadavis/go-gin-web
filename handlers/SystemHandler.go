@@ -23,9 +23,13 @@ func SystemUsersPage_Save(ctx *gin.Context) {
 		ctx.ShouldBind(&formData)
 		switch formData.Action {
 		case "new":
-			if user.RegNewUser(formData) {
-				messages = append(messages, "User created")
-				err = false
+			if user.LoginExists(formData.Login) {
+				messages = append(messages, "Login already exist")
+			} else {
+				if user.RegNewUser(formData) {
+					messages = append(messages, "User created")
+					err = false
+				}
 			}
 		case "edit":
 			if user.EditUser(formData) {

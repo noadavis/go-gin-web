@@ -8,21 +8,104 @@
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-borderless mb-0">
-                        <tr><td width="20%">Id</td><td>{{ .Data.Id }}</td></tr>
-                        <tr><td width="20%">Login</td><td>{{ .Data.Login }}</td></tr>
-                        <tr><td width="20%">Fullname</td><td>{{ .Data.Fullname }}</td></tr>
-                        <tr><td width="20%">Email</td><td>{{ .Data.Email }}</td></tr>
-                        <tr><td width="20%">Permissions</td><td>
-                            <strong>
+                        <tr>
+                            <td width="40%">Id</td><td width="50px"></td><td>{{ .Data.Id }}</td>
+                        </tr>
+                        <tr>
+                            <td>Login</td><td></td><td>{{ .Data.Login }}</td>
+                        </tr>
+                        <tr>
+                            <td>Fullname</td>
+                            <td><a class="btn btn-primary btn-sm" onclick="editInfo('fullname');return false;" href="#"><i class="fa fa-pencil"></i></a></td>
+                            <td><span id="userFullname">{{ .Data.Fullname }}</span></td>
+                        </tr>
+                        <tr>
+                            <td>Email</td>
+                            <td><a class="btn btn-primary btn-sm" onclick="editInfo('email');return false;" href="#"><i class="fa fa-pencil"></i></a></td>
+                            <td><span id="userEmail">{{ .Data.Email }}</span></td>
+                        </tr>
+                        <tr>
+                            <td>Password</td>
+                            <td><a class="btn btn-primary btn-sm" onclick="editInfo('password');return false;" href="#"><i class="fa fa-pencil"></i></a></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Permissions</td>
+                            <td></td>
+                            <td><strong>
                             {{ if eq .Data.Id_user 1 }}<span title="User">U</span>{{ end }}
                             {{ if eq .Data.Id_editor 1 }}<span title="Editor">E</span>{{ end }}
                             {{ if eq .Data.Id_admin 1 }}<span title="Admin">A</span>{{ end }}
-                            </strong>
-                        </td></tr>
+                            </strong></td>
+                        </tr>
                     </table>
                 </div>
             </div>
         </div>
     </div>
 </section>
+<link rel="stylesheet" type="text/css" href="/static/css/sweetalert.css">
+<script type="text/javascript" src="/static/js/jquery.min.js"></script>
+<script type="text/javascript" src="/static/js/sweetalert2.min.js"></script>
+<script>
+    // $(document).ready(function() {
+    //     //
+    // });
+    function editInfo(action) {
+        var title = "";
+        var value = "";
+        var inputType = "text";
+        switch (action) {
+            case "fullname":
+                title = "New Fullname";
+                value = $("#userFullname").text();
+                var inputType = "text";
+                break;
+            case "email":
+                title = "New Email";
+                value = $("#userEmail").text();
+                inputType = "email";
+                break;
+            case "password":
+                title = "New Password";
+                inputType = "password";
+                break;
+            default:
+                return false;
+        }
+        swal.fire({
+            title: title,
+            input: inputType,
+            inputValue: value,
+            showCancelButton: true,
+            confirmButtonText: "Change"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                if (result.value === false) return false;
+                if (result.value === "") return false;
+                $.ajax({
+                    type: "POST",
+                    url: "/user/edituserinfo/",
+                    data:"action="+action+"&value="+result.value,
+                    success: function(answer) {
+                        if (!answer.error) {
+                            switch (action) {
+                                case "fullname":
+                                    $("#userFullname").html(result.value);
+                                    break;
+                                case "email":
+                                    $("#userEmail").html(result.value);
+                                    break;
+                            }
+                        } else {
+                            if (answer.desc != "") Swal.fire(answer.desc);
+                        }
+                    }
+                });
+            }
+        });
+        return false;
+    }
+
+</script>
 {{template "bottom.html" .}}

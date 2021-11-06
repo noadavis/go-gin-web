@@ -5,6 +5,7 @@ package main
 import (
 	"go-gin-web/models"
 	"html/template"
+	"log"
 	"os"
 	"time"
 
@@ -24,11 +25,8 @@ func main() {
 		os.Exit(0)
 	}
 
-	if models.InitDb() {
-		fmt.Println("db connected")
-	} else {
-		fmt.Println("no db connection")
-	}
+	// init database connection
+	models.InitDb()
 
 	// init object with app base information
 	models.InitAppData()
@@ -52,7 +50,7 @@ func main() {
 	InitRoutePaths()
 
 	// run application with port from config.json
-	fmt.Printf("http://127.0.0.1:%d\n", props.GetProps().AppConf.Port)
+	log.Printf("http://127.0.0.1:%d\n", props.GetProps().AppConf.Port)
 	router.Run(fmt.Sprintf(":%d", props.GetProps().AppConf.Port))
 }
 

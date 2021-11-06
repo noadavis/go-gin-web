@@ -3,8 +3,8 @@
 package user
 
 import (
-	"fmt"
 	"go-gin-web/models"
+	"log"
 	"strconv"
 )
 
@@ -33,7 +33,7 @@ func GetUserList() []UserListPermission {
 		LEFT JOIN user AS us ON up.user = us.id
 		LEFT JOIN user_login AS lo ON lo.user = us.id
 		ORDER BY us.fullname`); err != nil {
-		fmt.Printf("GetUserList: %s\n", err.Error())
+		log.Printf("GetUserList: %s\n", err.Error())
 	}
 	return userList
 }
@@ -48,9 +48,19 @@ func GetUserInfo(userId int) models.UserInfo {
 		LEFT JOIN user_permission AS up ON up.user = us.id
 		LEFT JOIN user_login AS lo ON lo.user = us.id
 		WHERE us.id = ?`, userId); err != nil {
-		fmt.Printf("GetUserInfo: %s\n", err.Error())
+		log.Printf("GetUserInfo: %s\n", err.Error())
 	}
 	return userInfo
+}
+
+func LoginExists(login string) bool {
+	q := models.GetConnection()
+	userId := 0
+	if err := q.Get(&userId, "SELECT id FROM user WHERE login = ?", login); err != nil {
+		log.Printf("LoginExists [%s]: %s\n", login, err.Error())
+		return false
+	}
+	return userId != 0
 }
 
 func RegNewUser(userInfo models.UserForm) bool {
@@ -64,11 +74,11 @@ func RegNewUser(userInfo models.UserForm) bool {
 			"ul": userInfo.Login,
 			"un": userInfo.Fullname,
 			"ue": userInfo.Email}); err != nil {
-		fmt.Printf("RegNewUser [user]: %s\n", err.Error())
+		log.Printf("RegNewUser [user]: %s\n", err.Error())
 		return false
 	}
 	if err = q.Get(&userId, "SELECT id FROM user WHERE login = ?", userInfo.Login); err != nil {
-		fmt.Printf("RegNewUser [user]: %s\n", err.Error())
+		log.Printf("RegNewUser [user]: %s\n", err.Error())
 		return false
 	}
 	if _, err = q.NamedExec(`INSERT INTO user_login (user, password, session, session_date, enabled)
@@ -77,7 +87,7 @@ func RegNewUser(userInfo models.UserForm) bool {
 			"us": userId,
 			"ps": calcPassword(userInfo.Password),
 			"ue": enabled}); err != nil {
-		fmt.Printf("RegNewUser [user_login]: %s\n", err.Error())
+		log.Printf("RegNewUser [user_login]: %s\n", err.Error())
 		return false
 	}
 	if _, err := q.NamedExec(`INSERT INTO user_permission (user, id_user, id_editor, id_admin)
@@ -87,7 +97,7 @@ func RegNewUser(userInfo models.UserForm) bool {
 			"iu": findPermission("id_user", userInfo.Permissions),
 			"ie": findPermission("id_editor", userInfo.Permissions),
 			"ia": findPermission("id_admin", userInfo.Permissions)}); err != nil {
-		fmt.Printf("RegNewUser [user_permission]: %s\n", err.Error())
+		log.Printf("RegNewUser [user_permission]: %s\n", err.Error())
 		return false
 	}
 	return true
@@ -99,7 +109,7 @@ func EditUser(userInfo models.UserForm) bool {
 	var err error
 	userId := 0
 	if err = q.Get(&userId, "SELECT id FROM user WHERE id = ?", userInfo.User); err != nil {
-		fmt.Printf("EditUser: %s\n", err.Error())
+		log.Printf("EditUser: %s\n", err.Error())
 		return false
 	}
 	if userId == 0 {
@@ -112,7 +122,7 @@ func EditUser(userInfo models.UserForm) bool {
 			"un": userInfo.Fullname,
 			"ue": userInfo.Email,
 			"us": userId}); err != nil {
-		fmt.Printf("EditUser [user]: %s\n", err.Error())
+		log.Printf("EditUser [user]: %s\n", err.Error())
 		return false
 	}
 	if userInfo.Password == "" {
@@ -130,7 +140,7 @@ func EditUser(userInfo models.UserForm) bool {
 				"us": userId})
 	}
 	if err != nil {
-		fmt.Printf("EditUser [user_login]: %s\n", err.Error())
+		log.Printf("EditUser [user_login]: %s\n", err.Error())
 		return false
 	}
 	if _, err := q.NamedExec(`UPDATE user_permission SET id_user = :iu, id_editor = :ie, id_admin = :ia
@@ -140,7 +150,7 @@ func EditUser(userInfo models.UserForm) bool {
 			"ie": findPermission("id_editor", userInfo.Permissions),
 			"ia": findPermission("id_admin", userInfo.Permissions),
 			"us": userId}); err != nil {
-		fmt.Printf("EditUser [user_permission]: %s\n", err.Error())
+		log.Printf("EditUser [user_permission]: %s\n", err.Error())
 		return false
 	}
 	return true
@@ -165,7 +175,7 @@ func BlockUser(block bool, userId int) bool {
 		map[string]interface{}{
 			"status": status,
 			"user":   userId}); err != nil {
-		fmt.Printf("BlockUser: %s\n", err.Error())
+		log.Printf("BlockUser: %s\n", err.Error())
 		return false
 	}
 	return true
@@ -176,15 +186,48 @@ func DeleteUser(userId int) bool {
 	user := map[string]interface{}{"user": userId}
 	var err error
 	if _, err := q.NamedExec(`DELETE FROM user_permission WHERE user = :user`, user); err != nil {
-		fmt.Printf("DeleteUser: %s\n", err.Error())
+		log.Printf("DeleteUser: %s\n", err.Error())
 		return false
 	}
 	if _, err = q.NamedExec(`DELETE FROM user_login WHERE user = :user`, user); err != nil {
-		fmt.Printf("DeleteUser: %s\n", err.Error())
+		log.Printf("DeleteUser: %s\n", err.Error())
 		return false
 	}
 	if _, err = q.NamedExec(`DELETE FROM user WHERE id = :user`, user); err != nil {
-		fmt.Printf("DeleteUser: %s\n", err.Error())
+		log.Printf("DeleteUser: %s\n", err.Error())
+		return false
+	}
+	return true
+}
+
+func EditUserInfo(action, value string, userId int) bool {
+	q := models.GetConnection()
+	switch action {
+	case "fullname":
+		if _, err := q.NamedExec(`UPDATE user SET fullname = :fullname WHERE id = :user`,
+			map[string]interface{}{
+				"fullname": value,
+				"user":     userId}); err != nil {
+			log.Printf("EditUserInfo: %s\n", err.Error())
+			return false
+		}
+	case "email":
+		if _, err := q.NamedExec(`UPDATE user SET email = :email WHERE id = :user`,
+			map[string]interface{}{
+				"email": value,
+				"user":  userId}); err != nil {
+			log.Printf("EditUserInfo: %s\n", err.Error())
+			return false
+		}
+	case "password":
+		if _, err := q.NamedExec(`UPDATE user_login SET password = :password WHERE user = :user`,
+			map[string]interface{}{
+				"password": calcPassword(value),
+				"user":     userId}); err != nil {
+			log.Printf("EditUserInfo: %s\n", err.Error())
+			return false
+		}
+	default:
 		return false
 	}
 	return true

@@ -23,3 +23,6 @@ go get
 ```bash
 go build
 ```
+
+### Bootstrap 5 theme
+Mazer: https://github.com/zuramai/mazer

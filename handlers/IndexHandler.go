@@ -60,6 +60,8 @@ func ShowRegisterPage(ctx *gin.Context) {
 				message = "An error occurred during registration"
 			case "pass":
 				message = "Password mismatch"
+			case "login":
+				message = "Login already exist"
 			}
 		}
 	}
@@ -87,13 +89,17 @@ func Auth(ctx *gin.Context) {
 	case "reg":
 		// create new user
 		if formData.Password == formData.Passcheck {
-			formData.Enabled = "1"
-			formData.Permissions = append(formData.Permissions, "id_user")
-			if user.RegNewUser(formData) {
-				// register complete
-				location = url.URL{Path: "/auth/register", RawQuery: "a=success"}
+			if user.LoginExists(formData.Login) {
+				location = url.URL{Path: "/auth/register", RawQuery: "a=login"}
 			} else {
-				location = url.URL{Path: "/auth/register", RawQuery: "a=fail"}
+				formData.Enabled = "1"
+				formData.Permissions = append(formData.Permissions, "id_user")
+				if user.RegNewUser(formData) {
+					// register complete
+					location = url.URL{Path: "/auth/register", RawQuery: "a=success"}
+				} else {
+					location = url.URL{Path: "/auth/register", RawQuery: "a=fail"}
+				}
 			}
 		} else {
 			location = url.URL{Path: "/auth/register", RawQuery: "a=pass"}
