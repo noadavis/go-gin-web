@@ -57,7 +57,8 @@ CREATE TABLE `user` (
   `id` int NOT NULL AUTO_INCREMENT,
   `login` text NOT NULL,
   `fullname` text NOT NULL,
-  `email` text,
+  `email` text NOT NULL,
+  `avatar` text NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -68,7 +69,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,'admin','Admin','admin@domain.local'),(2,'user','User','user@domain.local');
+INSERT INTO `user` VALUES (1,'admin','Admin','admin@domain.local','avatar.png'),(2,'user','User','user@domain.local','avatar.png');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 

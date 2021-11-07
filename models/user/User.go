@@ -68,8 +68,8 @@ func RegNewUser(userInfo models.UserForm) bool {
 	q := models.GetConnection()
 	var err error
 	userId := 0
-	if _, err := q.NamedExec(`INSERT INTO user (login, fullname, email)
-		VALUES (:ul, :un, :ue)`,
+	if _, err := q.NamedExec(`INSERT INTO user (login, fullname, email, avatar)
+		VALUES (:ul, :un, :ue, 'avatar.png')`,
 		map[string]interface{}{
 			"ul": userInfo.Login,
 			"un": userInfo.Fullname,
@@ -228,6 +228,18 @@ func EditUserInfo(action, value string, userId int) bool {
 			return false
 		}
 	default:
+		return false
+	}
+	return true
+}
+
+func SetNewAvatar(avatar string, userId int) bool {
+	q := models.GetConnection()
+	if _, err := q.NamedExec(`UPDATE user SET avatar = :avatar WHERE id = :user`,
+		map[string]interface{}{
+			"avatar": avatar,
+			"user":   userId}); err != nil {
+		log.Printf("SetNewAvatar: %s\n", err.Error())
 		return false
 	}
 	return true

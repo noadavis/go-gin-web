@@ -31,6 +31,14 @@ func noAuthPaths(path string) bool {
 	return paths[path]
 }
 
+func noMiddlewarePaths(path string) bool {
+	paths := map[string]bool{
+		"/static/*filepath": true,
+		"/media/*filepath":  true,
+		"/favicon.ico":      true}
+	return paths[path]
+}
+
 func getUnixTimestampNow() string {
 	return strconv.FormatInt(time.Now().Unix(), 10)
 }
@@ -38,7 +46,7 @@ func getUnixTimestampNow() string {
 func SessionAuthMiddleware() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		currentPath := ctx.FullPath()
-		if currentPath == "/static/*filepath" || currentPath == "/favicon.ico" {
+		if noMiddlewarePaths(currentPath) {
 			return
 		}
 		fmt.Println("SessionAuthMiddleware: currentPath", currentPath)

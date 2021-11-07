@@ -21,7 +21,7 @@ func checkPassword(pass, passhash string) bool {
 func CheckSession(sessionId, sessionName, until string) models.SystemUser {
 	q := models.GetConnection()
 	user := models.SystemUser{}
-	if err := q.Get(&user, `SELECT us.id, us.login, us.fullname FROM user_login AS lo
+	if err := q.Get(&user, `SELECT us.id, us.login, us.fullname, us.avatar FROM user_login AS lo
 		LEFT JOIN user AS us ON lo.user = us.id
 		WHERE us.login = ? AND lo.session = ? AND lo.session_date > ? AND lo.enabled = 1`,
 		sessionName, sessionId, until); err != nil {

@@ -13,6 +13,7 @@ func InitRoutePaths() {
 
 	// static files: js, css, images in "./static" folder
 	router.Static("/static", "./static")
+	router.Static("/media", "./media")
 
 	// handle index route
 	router.GET("/", handlers.ShowIndexPage)
@@ -31,6 +32,7 @@ func InitRoutePaths() {
 	userRoutes.GET("/user", handlers.ShowUserPage)
 	userRoutes.GET("/editor", handlers.ShowEditorPage)
 	userRoutes.POST("/edituserinfo", handlers.ShowUserPage_EditInfo)
+	userRoutes.POST("/avatar", handlers.ShowUserPage_Avatar)
 
 	// handle system route
 	systemnRoutes := router.Group("/system")

@@ -1,11 +1,14 @@
 package handlers
 
 import (
+	"fmt"
 	"go-gin-web/models"
 	"go-gin-web/models/user"
+	"path/filepath"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/segmentio/ksuid"
 )
 
 // [/user/info]
@@ -64,6 +67,40 @@ func ShowUserPage_EditInfo(ctx *gin.Context) {
 		if answer.Error = !user.EditUserInfo(action, value, appData.UserData.Id); answer.Error {
 			answer.Desc = "database error"
 		}
+	}
+
+	RenderJSON(ctx, gin.H{"json": answer})
+}
+
+// [/user/avatar]
+func ShowUserPage_Avatar(ctx *gin.Context) {
+	appDataInterface, _ := ctx.Get("AppData")
+	appData := appDataInterface.(models.AppData)
+
+	answer := struct {
+		Error  bool   `json:"error"`
+		Desc   string `json:"desc"`
+		Avatar string `json:"avatar"`
+	}{
+		Error:  true,
+		Desc:   "",
+		Avatar: "",
+	}
+
+	if avatar, err := ctx.FormFile("avatar"); err == nil {
+		avatarExt := filepath.Ext(avatar.Filename)
+		avatarId := ksuid.New()
+		answer.Avatar = fmt.Sprintf("%s%s", avatarId.String(), avatarExt)
+		fmt.Println(answer.Avatar)
+		if err = ctx.SaveUploadedFile(avatar, "./media/avatars/"+answer.Avatar); err == nil {
+			if answer.Error = !user.SetNewAvatar(answer.Avatar, appData.UserData.Id); answer.Error {
+				answer.Desc = "database error"
+			}
+		} else {
+			fmt.Println(err)
+		}
+	} else {
+		fmt.Println(err)
 	}
 
 	RenderJSON(ctx, gin.H{"json": answer})

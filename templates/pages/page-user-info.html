@@ -15,6 +15,14 @@
                             <td>Login</td><td></td><td>{{ .Data.Login }}</td>
                         </tr>
                         <tr>
+                            <td>Avatar</td>
+                            <td><a class="btn btn-primary btn-sm" onclick="uploadAvatar();return false;" href="#"><i class="fa fa-pencil"></i></a></td>
+                            <td>
+                                <img alt="avatar" id="userAvatar" width="100px" src="/media/avatars/{{ .AppData.UserData.Avatar }}"> / 
+                                <input autocomplete="off" type="file" id="avatar" accept="image/png, image/jpeg">
+                            </td>
+                        </tr>
+                        <tr>
                             <td>Fullname</td>
                             <td><a class="btn btn-primary btn-sm" onclick="editInfo('fullname');return false;" href="#"><i class="fa fa-pencil"></i></a></td>
                             <td><span id="userFullname">{{ .Data.Fullname }}</span></td>
@@ -51,6 +59,28 @@
     // $(document).ready(function() {
     //     //
     // });
+    function uploadAvatar(action) {
+        if ($('#avatar')[0].files.length > 0) {
+            var formData = new FormData();
+            formData.append('avatar', $('#avatar')[0].files[0]);
+            $.ajax({
+                url : '/user/avatar',
+                type : 'POST',
+                data : formData,
+                processData: false,
+                contentType: false,
+                success : function(answer) {
+                    console.log(answer);
+                    if (!answer.error && answer.avatar != "") {
+                        $("#userAvatar").attr("src", "/media/avatars/" + answer.avatar);
+                    }
+                }
+            });
+        } else {
+            swal.fire("New avatar not selected");
+        }
+        return false;
+    }
     function editInfo(action) {
         var title = "";
         var value = "";
@@ -98,7 +128,7 @@
                                     break;
                             }
                         } else {
-                            if (answer.desc != "") Swal.fire(answer.desc);
+                            if (answer.desc != "") swal.fire(answer.desc);
                         }
                     }
                 });
