@@ -13,6 +13,7 @@ func InitRoutePaths() {
 
 	// static files: js, css, images in "./static" folder
 	router.Static("/static", "./static")
+	// static files from "./media" folder
 	router.Static("/media", "./media")
 
 	// handle index route
@@ -35,12 +36,12 @@ func InitRoutePaths() {
 	userRoutes.POST("/avatar", handlers.ShowUserPage_Avatar)
 
 	// handle system route
-	systemnRoutes := router.Group("/system")
-	systemnRoutes.GET("/users", handlers.SystemUsersPage)
-	systemnRoutes.GET("/menu", handlers.SystemMenuPage)
-	systemnRoutes.GET("/menu/:menu_id", handlers.SystemMenuPage_Edit)
-	systemnRoutes.POST("/users/save", handlers.SystemUsersPage_Save)
-	systemnRoutes.GET("/users/new", handlers.SystemUsersPage_New)
-	systemnRoutes.GET("/users/edit/:user_id", handlers.SystemUsersPage_Edit)
-	systemnRoutes.GET("/users/:action_id/:user_id/:block", handlers.SystemUsersPage_Action)
+	systemRoutes := router.Group("/system")
+	systemRoutes.GET("/users", handlers.SystemUsersPage)
+	systemRoutes.GET("/menu", handlers.SystemMenuPage)
+	systemRoutes.GET("/menu/:menu_id", handlers.SystemMenuPage_Edit)
+	systemRoutes.POST("/users/save", handlers.SystemUsersPage_Save)
+	systemRoutes.GET("/users/new", handlers.SystemUsersPage_New)
+	systemRoutes.GET("/users/edit/:user_id", handlers.SystemUsersPage_Edit)
+	systemRoutes.GET("/users/:action_id/:user_id/:block", handlers.SystemUsersPage_Action)
 }
