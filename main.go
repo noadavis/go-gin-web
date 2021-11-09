@@ -3,6 +3,7 @@
 package main
 
 import (
+	"go-gin-web/migration"
 	"go-gin-web/models"
 	"html/template"
 	"log"
@@ -22,6 +23,14 @@ var router *gin.Engine
 func main() {
 	// test config.json
 	if !props.CheckConfig() {
+		os.Exit(0)
+	}
+
+	// run migration and exit
+	// go-gin-web migrate up
+	// go-gin-web migrate down
+	if len(os.Args) > 1 {
+		migration.InitMigration()
 		os.Exit(0)
 	}
 

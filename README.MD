@@ -10,9 +10,7 @@
 
 > set connection to your mysql server in config.json db section
 
-> create mysql database and import dump from [gin.sql](gin.sql)
-
-> gin.sql dump comes with two users "admin" and "user", both has password "qwe"
+> run database migrations "go-gin-web migrate up", migrations comes with two users "admin" and "user", both has password "qwe"
 
 ### Install dependencies
 ```bash
@@ -22,6 +20,11 @@ go get
 ### Build
 ```bash
 go build
+```
+
+### Run migrations
+```bash
+go-gin-web migrate up
 ```
 
 ### Bootstrap 5 theme

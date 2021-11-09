@@ -1,0 +1,1 @@
+ALTER TABLE `user` ADD COLUMN avatar VARCHAR(50) NOT NULL DEFAULT 'avatar.png';
