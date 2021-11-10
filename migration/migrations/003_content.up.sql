@@ -10,7 +10,7 @@ INSERT INTO `user_permission` VALUES
 INSERT INTO `menu` VALUES 
 (1,0,'single','Home','/','home','',1,1),
 (2,0,'multi','Pages','','list','id_auth',11,1),
-(3,2,'','UserInfo','/user/info','info','id_auth',1,1),
+(3,2,'','UserInfo','/user/info','id-card-o','id_auth',1,1),
 (4,2,'','User Page','/user/user','lock','id_user',4,1),
 (5,2,'','Editor Page','/user/editor','lock','id_editor',7,1),
 (6,0,'multi','System','','gears','id_admin',31,1),

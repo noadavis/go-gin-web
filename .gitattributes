@@ -1,3 +1,18 @@
-templates/auth/* linguist-vendored
-templates/base/* linguist-vendored
-static/* linguist-vendored
+// templates/auth/* linguist-vendored
+// templates/base/* linguist-vendored
+// static/* linguist-vendored
+
+/templates/auth/login.html linguist-vendored
+/templates/auth/register.html linguist-vendored
+/templates/base/top.html linguist-vendored
+/templates/base/bottom.html linguist-vendored
+/templates/base/modify.html linguist-vendored
+
+/static/css/app.css linguist-vendored
+/static/css/bootstrap.css linguist-vendored
+/static/css/font-awesome.min.css linguist-vendored
+/static/css/sweetalert.css linguist-vendored
+
+/static/js/jquery.min.js linguist-vendored
+/static/js/sweetalert2.min.js linguist-vendored
+/static/js/bootstrap.bundle.min.js linguist-vendored

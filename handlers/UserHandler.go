@@ -16,7 +16,7 @@ func ShowUserInfoPage(ctx *gin.Context) {
 	appDataInterface, _ := ctx.Get("AppData")
 	appData := appDataInterface.(models.AppData)
 	appData.PageTitle = "User Info Page"
-	appData.PageIcon = "info"
+	appData.PageIcon = "id-card-o"
 
 	userInfo := user.GetUserInfo(appData.UserData.Id)
 
