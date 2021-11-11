@@ -14,29 +14,22 @@ import (
 )
 
 var props models.ConfigManager
-
-func openPaths(path string) bool {
-	paths := map[string]bool{
-		"/": true}
-	return paths[path]
+var openPaths = map[string]bool{
+	"/":                       true,
+	"/blog/":                  true,
+	"/blog/:category_id":      true,
+	"/blog/record/:record_id": true,
 }
-
-// pages with full access
-func noAuthPaths(path string) bool {
-	paths := map[string]bool{
-		"/auth/login":    true,
-		"/auth/register": true,
-		"/auth/auth":     true,
-		"/permission":    true}
-	return paths[path]
+var noAuthPaths = map[string]bool{
+	"/auth/login":    true,
+	"/auth/register": true,
+	"/auth/auth":     true,
+	"/permission":    true,
 }
-
-func noMiddlewarePaths(path string) bool {
-	paths := map[string]bool{
-		"/static/*filepath": true,
-		"/media/*filepath":  true,
-		"/favicon.ico":      true}
-	return paths[path]
+var noMiddlewarePaths = map[string]bool{
+	"/static/*filepath": true,
+	"/media/*filepath":  true,
+	"/favicon.ico":      true,
 }
 
 func getUnixTimestampNow() string {
@@ -46,7 +39,7 @@ func getUnixTimestampNow() string {
 func SessionAuthMiddleware() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		currentPath := ctx.FullPath()
-		if noMiddlewarePaths(currentPath) {
+		if noMiddlewarePaths[currentPath] {
 			return
 		}
 		fmt.Println("SessionAuthMiddleware: currentPath", currentPath)
@@ -55,7 +48,7 @@ func SessionAuthMiddleware() gin.HandlerFunc {
 		// get AppData with basic app variables, as new object
 		// update AppData for current user: menu, permissions, auth, userinfo
 		appData := models.GetAppData()
-		if !noAuthPaths(currentPath) {
+		if !noAuthPaths[currentPath] {
 			session := sessions.Default(ctx)
 			session.Options(sessions.Options{Path: "/"})
 			sessionId := session.Get("gin_session_id")
@@ -68,7 +61,7 @@ func SessionAuthMiddleware() gin.HandlerFunc {
 				}
 			}
 			// redirect to permission page for not authorized users
-			if !openPaths(currentPath) {
+			if !openPaths[currentPath] {
 				if !appData.UserAuth {
 					location := url.URL{Path: "/permission"}
 					ctx.Redirect(302, location.RequestURI())
