@@ -10,7 +10,7 @@
 
 > set connection to your mysql server in config.json db section
 
-> run database migrations "go-gin-web migrate up", migrations comes with two users "admin" and "user", both has password "qwe"
+> run database migrations "go-gin-web migrate up", migrations comes with 3 users "admin", "editor" and "user", all has password "qwe"
 
 ### Install dependencies
 ```bash
