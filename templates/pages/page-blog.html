@@ -1,0 +1,31 @@
+{{template "top.html" .}}
+<section class="row">
+    <div class="col-12 col-lg-9">
+    {{ if .Records }}
+        {{ range .Records }}
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title"><a href="/blog/record/{{ .Id }}">{{ .Name }}</a></h4>
+                <p class="card-subtitle">
+                    <i class="fa fa-calendar"></i> {{ dateTimeFormat .Datecreated }}, 
+                    <i class="fa fa-user"></i> {{ .Fullname }}, 
+                    <i class="fa fa-bars"></i> {{ .Category }}
+                </p>
+                <hr>
+                {{ noescape .Preview }}
+            </div>
+        </div>
+        {{ end }}
+    {{ else }}
+        <div class="card">
+            <div class="card-body">
+                <p>Records not found</p>
+            </div>
+        </div>
+    {{ end }}
+    </div>
+    <div class="col-12 col-lg-3">
+        {{template "blog-menu.html" .Categories}}
+    </div>
+</section>
+{{template "bottom.html" .}}

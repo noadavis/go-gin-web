@@ -44,4 +44,11 @@ func InitRoutePaths() {
 	systemRoutes.GET("/users/new", handlers.SystemUsersPage_New)
 	systemRoutes.GET("/users/edit/:user_id", handlers.SystemUsersPage_Edit)
 	systemRoutes.GET("/users/:action_id/:user_id/:block", handlers.SystemUsersPage_Action)
+
+	// handle blog route
+	blogRoutes := router.Group("/blog")
+	blogRoutes.GET("/", handlers.BlogMainPage)
+	blogRoutes.GET("/record/:record_id", handlers.BlogPage_Record)
+	blogRoutes.GET("/record/:record_id/edit", handlers.BlogPage_RecordEdit)
+	blogRoutes.GET("/:category_id", handlers.BlogPage_Category)
 }
