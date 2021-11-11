@@ -49,7 +49,9 @@ func main() {
 
 	// register some functions for templates
 	router.SetFuncMap(template.FuncMap{
-		"dateFormat": dateFormat,
+		"dateFormat":     dateFormat,
+		"dateTimeFormat": dateTimeFormat,
+		"noescape":       noescape,
 	})
 
 	// load template files
@@ -66,4 +68,12 @@ func main() {
 func dateFormat(t time.Time) string {
 	year, month, day := t.Date()
 	return fmt.Sprintf("%02d/%02d/%d", day, month, year)
+}
+
+func dateTimeFormat(t time.Time) string {
+	return t.Format("02/01/2006 15:04")
+}
+
+func noescape(str string) template.HTML {
+	return template.HTML(str)
 }
