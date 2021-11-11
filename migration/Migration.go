@@ -13,6 +13,8 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 )
 
+var props models.ConfigManager
+
 func InitMigration() {
 	if len(os.Args) > 2 {
 		if os.Args[1] != "migrate" {
@@ -32,8 +34,7 @@ func InitMigration() {
 
 func RunMigration(up bool) {
 	// connect to db
-	params := fmt.Sprintf("%s?multiStatements=true", models.GetConnectionString())
-	conn, err := sql.Open("mysql", params)
+	conn, err := sql.Open("mysql", getConnectionString())
 	if err != nil {
 		log.Fatalf("could not connect to the MySQL database... %v", err)
 	}
@@ -80,4 +81,9 @@ func RunMigration(up bool) {
 			}
 		}
 	}
+}
+
+func getConnectionString() string {
+	var conf = props.GetProps().DbConf
+	return fmt.Sprintf("%s:%s@(%s:%d)/%s?multiStatements=true", conf.User, conf.Password, conf.Address, conf.Port, conf.Name)
 }

@@ -13,7 +13,7 @@ var props ConfigManager
 
 func InitDb() bool {
 	var err error
-	params := GetConnectionString()
+	params := getConnectionString()
 	// log.Println(fmt.Sprintf("db connection params: %s", params))
 	conn, err = sqlx.Connect("mysql", params)
 	if err != nil {
@@ -40,7 +40,7 @@ func GetConnection() *sqlx.DB {
 	return conn
 }
 
-func GetConnectionString() string {
+func getConnectionString() string {
 	var conf = props.GetProps().DbConf
-	return fmt.Sprintf("%s:%s@(%s:%d)/%s", conf.User, conf.Password, conf.Address, conf.Port, conf.Name)
+	return fmt.Sprintf("%s:%s@(%s:%d)/%s?parseTime=true", conf.User, conf.Password, conf.Address, conf.Port, conf.Name)
 }
