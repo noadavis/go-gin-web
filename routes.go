@@ -50,5 +50,6 @@ func InitRoutePaths() {
 	blogRoutes.GET("/", handlers.BlogMainPage)
 	blogRoutes.GET("/record/:record_id", handlers.BlogPage_Record)
 	blogRoutes.GET("/record/:record_id/edit", handlers.BlogPage_RecordEdit)
+	blogRoutes.POST("/record/save", handlers.BlogPage_RecordSave)
 	blogRoutes.GET("/:category_id", handlers.BlogPage_Category)
 }

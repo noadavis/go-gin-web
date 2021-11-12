@@ -26,6 +26,14 @@ type BlogRecord struct {
 	Datechanged time.Time `db:"datechanged"`
 }
 
+type FormRecord struct {
+	Id       string `form:"record"`
+	Title    string `form:"title"`
+	Category string `form:"category"`
+	Preview  string `form:"preview"`
+	Content  string `form:"content"`
+}
+
 func GetCategories(auth bool) []BlogCategory {
 	q := models.GetConnection()
 	categories := []BlogCategory{}
@@ -94,4 +102,32 @@ func GetRecord(recordId int, auth bool, author int) BlogRecord {
 		log.Printf("GetAllRecords: %s\n", err.Error())
 	}
 	return record
+}
+
+func SaveRecord(userId int, data FormRecord) bool {
+	q := models.GetConnection()
+	recordId := 0
+	// check author and id from form
+	// only author can edit record
+	if err := q.Get(&recordId, `SELECT id FROM blog WHERE author = ? AND id = ?`, userId, data.Id); err != nil {
+		log.Printf("SaveRecord: %s\n", err.Error())
+	} else {
+		if recordId > 0 {
+			if _, err = q.NamedExec(`UPDATE blog SET name = :ti, category = :ca, preview = :re, text = :te, datechanged = :dc
+				WHERE id = :id`,
+				map[string]interface{}{
+					"ti": data.Title,
+					"ca": data.Category,
+					"re": data.Preview,
+					"te": data.Content,
+					"dc": time.Now(),
+					"id": recordId}); err != nil {
+				log.Printf("EditUser [user]: %s\n", err.Error())
+				return false
+			} else {
+				return true
+			}
+		}
+	}
+	return false
 }

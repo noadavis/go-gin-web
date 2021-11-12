@@ -7,16 +7,16 @@
                 <p class="card-subtitle">
                     <i class="fa fa-calendar"></i> {{ dateTimeFormat .Record.Datecreated }}, 
                     <i class="fa fa-user"></i> {{ .Record.Fullname }}, 
-                    <i class="fa fa-bars"></i> {{ .Record.Category }}
+                    <i class="fa fa-bars"></i> <a title="Back to category" href="/blog/{{ .Record.CategoryId }}">{{ .Record.Category }}</a>
                 </p>
                 <hr>
                 <div class="form-group">
-                    <label for="title-vertical">Title</label>
-                    <input autocomplete="off" type="text" id="title-vertical" class="form-control" name="title" value="{{ .Record.Name }}" placeholder="Record title">
+                    <label for="recordTitle">Title</label>
+                    <input autocomplete="off" type="text" id="recordTitle" class="form-control" name="title" value="{{ .Record.Name }}" placeholder="Record title">
                 </div>
                 <div class="form-group">
-                    <label for="category-vertical">Category</label>
-                    <select autocomplete="off" id="category-vertical" class="form-control" name="category">
+                    <label for="recordCategory">Category</label>
+                    <select autocomplete="off" id="recordCategory" class="form-control" name="category">
                         {{ range .Categories }}
                         <option value={{.Id}} {{ if eq .Id $.Record.CategoryId }}selected{{ end }}>{{.Name}}</option>
                         {{ end }}
@@ -24,12 +24,12 @@
                 </div>
                 <hr>
                 <p>Preview</p>
-                <div id="record-review">{{ noescape .Record.Preview }}</div>
+                <div id="record-preview">{{ noescape .Record.Preview }}</div>
                 <hr>
                 <p>Content</p>
                 <div id="record-text">{{ noescape .Record.Text }}</div>
                 <hr>
-                <p>save in development</p>
+                <p><a class="btn btn-primary" href="#" onclick="saveRecord(); return false;"><i class="fa fa-floppy-o"></i> Save</a></p>
             </div>
         </div>
     {{ else }}
@@ -41,14 +41,35 @@
     {{ end }}
     </div>
 </section>
+<link rel="stylesheet" type="text/css" href="/static/css/sweetalert.css">
 <link rel="stylesheet" href="/static/css/summernote-lite.min.css">
-<script src="/static/js/jquery.min.js"></script>
-<script src="/static/js/summernote-lite.min.js"></script>
+<script type="text/javascript" src="/static/js/jquery.min.js"></script>
+<script type="text/javascript" src="/static/js/summernote-lite.min.js"></script>
+<script type="text/javascript" src="/static/js/sweetalert2.min.js"></script>
 <script>
-    $('#record-review').summernote({
+    function saveRecord() {
+        var formData = new FormData();
+        formData.append('record', {{ .Record.Id }});
+        formData.append('title', $("#recordTitle").val());
+        formData.append('category', $("#recordCategory").val());
+        formData.append('preview', $('#record-preview').summernote('code'));
+        formData.append('content', $('#record-text').summernote('code'));
+        $.ajax({
+            url : '/blog/record/save',
+            type : 'POST',
+            data : formData,
+            processData: false,
+            contentType: false,
+            success : function(answer) {
+                if (answer.error) swal.fire("Error while save record");
+                else swal.fire("Record saved");
+            }
+        });
+    }
+    $('#record-preview').summernote({
         tabsize: 2,
         height: 120,
-        spellCheck: true,
+        spellCheck: false,
         toolbar: [
             ['font', ['bold', 'underline', 'clear']],
             ['color', ['color']],
@@ -60,7 +81,7 @@
     $('#record-text').summernote({
         tabsize: 2,
         height: 170,
-        spellCheck: true,
+        spellCheck: false,
         toolbar: [
             ['font', ['bold', 'underline', 'clear']],
             ['color', ['color']],

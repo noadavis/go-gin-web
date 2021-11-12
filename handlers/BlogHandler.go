@@ -82,3 +82,18 @@ func BlogPage_RecordEdit(ctx *gin.Context) {
 
 	Render(ctx, gin.H{"AppData": appData, "Categories": categories, "Record": record, "Author": author}, "page-blog-record-edit.html")
 }
+
+// [/blog/record/save]
+func BlogPage_RecordSave(ctx *gin.Context) {
+	appDataInterface, _ := ctx.Get("AppData")
+	appData := appDataInterface.(models.AppData)
+
+	formData := blog.FormRecord{}
+	ctx.ShouldBind(&formData)
+	jsonAnswer := `{ "error": true, "desc": "" }`
+	if blog.SaveRecord(appData.UserData.Id, formData) {
+		jsonAnswer = `{ "error": false, "desc": "" }`
+	}
+
+	RenderSTRING(ctx, gin.H{"string": jsonAnswer}, "application/json; charset=utf-8")
+}

@@ -7,7 +7,7 @@
                 <p class="card-subtitle">
                     <i class="fa fa-calendar"></i> {{ dateTimeFormat .Record.Datecreated }}, 
                     <i class="fa fa-user"></i> {{ .Record.Fullname }}, 
-                    <i class="fa fa-bars"></i> {{ .Record.Category }}
+                    <i class="fa fa-bars"></i> <a title="Back to category" href="/blog/{{ .Record.CategoryId }}">{{ .Record.Category }}</a>
                 </p>
                 <hr>
                 {{ noescape .Record.Preview }}
