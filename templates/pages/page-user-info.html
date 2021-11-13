@@ -70,7 +70,6 @@
                 processData: false,
                 contentType: false,
                 success : function(answer) {
-                    console.log(answer);
                     if (!answer.error && answer.avatar != "") {
                         $("#userAvatar").attr("src", "/media/avatars/" + answer.avatar);
                     }

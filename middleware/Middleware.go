@@ -58,6 +58,9 @@ func SessionAuthMiddleware() gin.HandlerFunc {
 				appData.UserAuth = appData.UserData.Login != ""
 				if appData.UserAuth {
 					appData.Permissions = user.GetUserPermissionsList(appData.UserData.Id)
+					if _, err := models.CheckPermission(appData.Permissions, "id_editor", ""); !err {
+						appData.UserData.Editor = true
+					}
 				}
 			}
 			// redirect to permission page for not authorized users

@@ -21,11 +21,12 @@ type MenuChild struct {
 	Ordering   int    `db:"ordering"`
 }
 
-type SystemUser struct {
+type UserData struct {
 	Id       int    `db:"id"`
 	Login    string `db:"login"`
 	Fullname string `db:"fullname"`
 	Avatar   string `db:"avatar"`
+	Editor   bool
 }
 
 type UserInfo struct {

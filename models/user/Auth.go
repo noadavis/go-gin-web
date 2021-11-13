@@ -18,15 +18,16 @@ func checkPassword(pass, passhash string) bool {
 	return calcPassword(pass) == passhash
 }
 
-func CheckSession(sessionId, sessionName, until string) models.SystemUser {
+func CheckSession(sessionId, sessionName, until string) models.UserData {
 	q := models.GetConnection()
-	user := models.SystemUser{}
+	user := models.UserData{}
 	if err := q.Get(&user, `SELECT us.id, us.login, us.fullname, us.avatar FROM user_login AS lo
 		LEFT JOIN user AS us ON lo.user = us.id
 		WHERE us.login = ? AND lo.session = ? AND lo.session_date > ? AND lo.enabled = 1`,
 		sessionName, sessionId, until); err != nil {
 		fmt.Printf("CheckSession: %s\n", err.Error())
 	}
+	user.Editor = false
 	return user
 }
 

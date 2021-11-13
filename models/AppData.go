@@ -3,6 +3,7 @@ package models
 import (
 	"fmt"
 	"reflect"
+	"strconv"
 	"time"
 )
 
@@ -16,7 +17,7 @@ type AppData struct {
 	Permissions []string
 	PageTitle   string
 	PageIcon    string
-	UserData    SystemUser
+	UserData    UserData
 }
 type FooterData struct {
 	Right string
@@ -83,4 +84,11 @@ func GetModifyMessage(error bool, messages []string) ModifyFormData {
 		data.Action = "success"
 	}
 	return data
+}
+
+func CheckInt(value string) bool {
+	if _, err := strconv.Atoi(value); err == nil {
+		return true
+	}
+	return false
 }
