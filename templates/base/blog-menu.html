@@ -4,9 +4,23 @@
             <h4>Category:</h4>
         </div>
         <div class="card-body">
-            {{ range . }}
+            {{ range .Categories }}
                 <p><a href="/blog/{{ .Id }}">{{ .Name }}</a></p>
             {{ end }}
         </div>
     </div>
+    {{ if .AppData.UserData.Editor }}
+    <div class="card">
+        <div class="card-header">
+            <h4>Action:</h4>
+        </div>
+        <div class="card-body">
+            <p><a href="/blog/category/new">New category</a></p>
+            {{ if gt .Category 0 }}
+            <p><a href="/blog/category/{{ .Category }}/edit">Edit category</a></p>
+            {{ end }}
+            <p><a href="/blog/record/new">New record</a></p>
+        </div>
+    </div>
+    {{ end }}
 </div>

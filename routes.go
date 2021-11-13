@@ -48,8 +48,15 @@ func InitRoutePaths() {
 	// handle blog route
 	blogRoutes := router.Group("/blog")
 	blogRoutes.GET("/", handlers.BlogMainPage)
-	blogRoutes.GET("/record/:record_id", handlers.BlogPage_Record)
-	blogRoutes.GET("/record/:record_id/edit", handlers.BlogPage_RecordEdit)
-	blogRoutes.POST("/record/save", handlers.BlogPage_RecordSave)
 	blogRoutes.GET("/:category_id", handlers.BlogPage_Category)
+	blogRoutes.GET("/record/:record_id", handlers.BlogPage_Record)
+
+	blogRoutes.GET("/record/:record_id/edit", handlers.BlogPage_RecordEdit)
+	blogRoutes.GET("/record/new", handlers.BlogPage_RecordNew)
+	blogRoutes.POST("/record/save", handlers.BlogPage_RecordSave)
+
+	blogRoutes.GET("/category/:category_id/edit", handlers.BlogPage_CategoryEdit)
+	blogRoutes.GET("/category/new", handlers.BlogPage_CategoryNew)
+	blogRoutes.POST("/category/save", handlers.BlogPage_CategorySave)
+
 }

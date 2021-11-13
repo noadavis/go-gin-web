@@ -11,6 +11,7 @@ type BlogCategory struct {
 	Id    int    `db:"id"`
 	Name  string `db:"name"`
 	Alias string `db:"alias"`
+	Auth  int    `db:"auth"`
 }
 
 type BlogRecord struct {
@@ -32,6 +33,15 @@ type FormRecord struct {
 	Category string `form:"category"`
 	Preview  string `form:"preview"`
 	Content  string `form:"content"`
+	Action   string `form:"action"`
+}
+
+type FormCategory struct {
+	Id     string `form:"category"`
+	Name   string `form:"name"`
+	Alias  string `form:"alias"`
+	Auth   string `form:"auth"`
+	Action string `form:"action"`
 }
 
 func GetCategories(auth bool) []BlogCategory {
@@ -41,15 +51,52 @@ func GetCategories(auth bool) []BlogCategory {
 	if !auth {
 		showAll = "WHERE auth = 0"
 	}
-	err := q.Select(&categories, fmt.Sprintf(`SELECT id, name, alias
-		FROM category %s ORDER BY id`, showAll))
-	if err != nil {
+	if err := q.Select(&categories, fmt.Sprintf(`SELECT id, name
+		FROM category %s ORDER BY id`, showAll)); err != nil {
 		log.Printf("GetCategories: %s", err.Error())
 	}
 	return categories
 }
 
-func GetCategory(category int, auth bool) []BlogRecord {
+func GetCategory(categoryId int) BlogCategory {
+	q := models.GetConnection()
+	category := BlogCategory{}
+	if err := q.Get(&category, `SELECT id, name, alias, auth 
+		FROM category WHERE id = ?`, categoryId); err != nil {
+		log.Printf("GetCategory: %s", err.Error())
+	}
+	return category
+}
+
+func SaveCategory(data FormCategory) bool {
+	q := models.GetConnection()
+	if data.Id == "-1" {
+		// add new category
+		if _, err := q.NamedExec(`INSERT INTO category (name, auth, alias, permission)
+			VALUES (:na, :au, :al, '')`,
+			map[string]interface{}{
+				"na": data.Name,
+				"au": data.Auth,
+				"al": data.Alias}); err != nil {
+			log.Printf("SaveCategory: %s\n", err.Error())
+			return false
+		}
+	} else {
+		if _, err := q.NamedExec(`UPDATE category SET name = :na, auth = :au, alias = :al, permission = ''
+			WHERE id = :id`,
+			map[string]interface{}{
+				"na": data.Name,
+				"au": data.Auth,
+				"al": data.Alias,
+				"id": data.Id}); err != nil {
+			log.Printf("SaveCategory: %s\n", err.Error())
+			return false
+		}
+	}
+	return true
+}
+
+func GetCategoryContent(category int, auth bool) []BlogRecord {
 	q := models.GetConnection()
 	records := []BlogRecord{}
 	showAll := ""
@@ -106,23 +153,64 @@ func GetRecord(recordId int, auth bool, author int) BlogRecord {
 
 func SaveRecord(userId int, data FormRecord) bool {
 	q := models.GetConnection()
+	if data.Id == "-1" {
+		// add new record
+		if _, err := q.NamedExec(`INSERT INTO blog (category, name, author, preview, text, datecreated, datechanged) VALUES
+			(:ca, :na, :au, :pr, :te, :dcr, :dch)`,
+			map[string]interface{}{
+				"ca":  data.Category,
+				"na":  data.Title,
+				"au":  userId,
+				"pr":  data.Preview,
+				"te":  data.Content,
+				"dcr": time.Now(),
+				"dch": time.Now()}); err != nil {
+			log.Printf("SaveRecord: %s\n", err.Error())
+			return false
+		} else {
+			return true
+		}
+	} else {
+		recordId := 0
+		// check author and id from form
+		// only author can edit record
+		if err := q.Get(&recordId, `SELECT id FROM blog WHERE author = ? AND id = ?`, userId, data.Id); err != nil {
+			log.Printf("SaveRecord: %s\n", err.Error())
+		} else {
+			if recordId > 0 {
+				if _, err = q.NamedExec(`UPDATE blog SET name = :ti, category = :ca, preview = :pr, text = :te, datechanged = :dc
+					WHERE id = :id`,
+					map[string]interface{}{
+						"ti": data.Title,
+						"ca": data.Category,
+						"pr": data.Preview,
+						"te": data.Content,
+						"dc": time.Now(),
+						"id": recordId}); err != nil {
+					log.Printf("SaveRecord: %s\n", err.Error())
+					return false
+				} else {
+					return true
+				}
+			}
+		}
+	}
+	return false
+}
+
+func DeleteRecord(userId int, data FormRecord) bool {
+	q := models.GetConnection()
 	recordId := 0
 	// check author and id from form
-	// only author can edit record
+	// only author can delete record
 	if err := q.Get(&recordId, `SELECT id FROM blog WHERE author = ? AND id = ?`, userId, data.Id); err != nil {
-		log.Printf("SaveRecord: %s\n", err.Error())
+		log.Printf("DeleteRecord: %s\n", err.Error())
 	} else {
 		if recordId > 0 {
-			if _, err = q.NamedExec(`UPDATE blog SET name = :ti, category = :ca, preview = :re, text = :te, datechanged = :dc
-				WHERE id = :id`,
+			if _, err = q.NamedExec(`DELETE FROM blog WHERE id = :id`,
 				map[string]interface{}{
-					"ti": data.Title,
-					"ca": data.Category,
-					"re": data.Preview,
-					"te": data.Content,
-					"dc": time.Now(),
 					"id": recordId}); err != nil {
-				log.Printf("EditUser [user]: %s\n", err.Error())
+				log.Printf("DeleteRecord: %s\n", err.Error())
 				return false
 			} else {
 				return true
@@ -130,4 +218,15 @@ func SaveRecord(userId int, data FormRecord) bool {
 		}
 	}
 	return false
+}
+
+func DeleteCategory(data FormCategory) bool {
+	q := models.GetConnection()
+	if _, err := q.NamedExec(`DELETE FROM category WHERE id = :id`,
+		map[string]interface{}{
+			"id": data.Id}); err != nil {
+		log.Printf("DeleteCategory: %s\n", err.Error())
+		return false
+	}
+	return true
 }

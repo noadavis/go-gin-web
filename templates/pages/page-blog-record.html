@@ -4,7 +4,7 @@
     {{ if ne .Record.Id 0 }}
         <div class="card">
             <div class="card-body">
-                <p class="card-subtitle">
+                <p class="card-subtitle" style="font-size: 90%">
                     <i class="fa fa-calendar"></i> {{ dateTimeFormat .Record.Datecreated }}, 
                     <i class="fa fa-user"></i> {{ .Record.Fullname }}, 
                     <i class="fa fa-bars"></i> <a title="Back to category" href="/blog/{{ .Record.CategoryId }}">{{ .Record.Category }}</a>
@@ -14,7 +14,8 @@
                 {{ noescape .Record.Text }}
                 {{ if .Author }}
                 <hr>
-                <a href="/blog/record/{{ .Record.Id }}/edit"><i class="fa fa-pencil"></i> Edit</a>
+                <p><a class="btn btn-info btn-sm" href="/blog/record/{{ .Record.Id }}/edit"><i class="fa fa-pencil"></i> Edit</a>
+                <a class="btn btn-danger btn-sm" href="#" onclick="deleteRecord(); return false;"><i class="fa fa-trash"></i> Delete</a></p>
                 {{ end }}
             </div>
         </div>
@@ -27,7 +28,31 @@
     {{ end }}
     </div>
     <div class="col-12 col-lg-3">
-        {{template "blog-menu.html" .Categories}}
+        {{template "blog-menu.html" .}}
     </div>
 </section>
+
+<link rel="stylesheet" type="text/css" href="/static/css/sweetalert.css">
+<script type="text/javascript" src="/static/js/jquery.min.js"></script>
+<script type="text/javascript" src="/static/js/sweetalert2.min.js"></script>
+<script>
+    function deleteRecord() {
+        var formData = new FormData();
+        formData.append('record', {{ .Record.Id }});
+        formData.append('action', "delete");
+        $.ajax({
+            url : '/blog/record/save',
+            type : 'POST',
+            data : formData,
+            processData: false,
+            contentType: false,
+            success : function(answer) {
+                if (answer.error) swal.fire("Error while delete record");
+                else {
+                    window.location.replace("/blog/{{ .Record.CategoryId }}");
+                }
+            }
+        });
+    }
+</script>
 {{template "bottom.html" .}}

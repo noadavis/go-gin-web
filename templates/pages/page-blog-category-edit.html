@@ -1,0 +1,84 @@
+{{template "top.html" .}}
+<section class="row">
+    <div class="col-12">
+    {{ if ne .Category.Id 0 }}
+        <div class="card">
+            <div class="card-body">
+                <div class="form-group">
+                    <label for="categoryName">Name</label>
+                    <input autocomplete="off" type="text" id="categoryName" class="form-control" name="name" value="{{ .Category.Name }}" placeholder="Category Name">
+                </div>
+                <div class="form-group">
+                    <label for="categoryAlias">Alias</label>
+                    <input autocomplete="off" type="text" id="categoryyAlias" class="form-control" name="alias" value="{{ .Category.Alias }}" placeholder="Category Alias">
+                </div>
+                <div class="form-check">
+                    <div class="checkbox">
+                        <input type="checkbox" id="auth" class="form-check-input" name="auth" value="1" {{ if eq .Category.Auth 1 }}checked=""{{ end }}>
+                        <label for="auth">Category only for registered users </label>
+                    </div>
+                </div>
+                <hr>
+                <p><a class="btn btn-primary" href="#" onclick="saveCategory(); return false;"><i class="fa fa-floppy-o"></i> Save</a>
+                {{ if gt .Category.Id 0 }}<a class="btn btn-danger" href="#" onclick="deleteCategory(); return false;"><i class="fa fa-trash"></i> Delete</a>{{ end }}</p>
+            </div>
+        </div>
+    {{ else }}
+        <div class="card">
+            <div class="card-body">
+                <p>Category not found</p>
+            </div>
+        </div>
+    {{ end }}
+    </div>
+</section>
+<link rel="stylesheet" type="text/css" href="/static/css/sweetalert.css">
+<link rel="stylesheet" href="/static/css/summernote-lite.min.css">
+<script type="text/javascript" src="/static/js/jquery.min.js"></script>
+<script type="text/javascript" src="/static/js/summernote-lite.min.js"></script>
+<script type="text/javascript" src="/static/js/sweetalert2.min.js"></script>
+<script>
+    function saveCategory() {
+        var formData = new FormData();
+        formData.append('category', {{ .Category.Id }});
+        formData.append('name', $("#categoryName").val());
+        formData.append('alias', $("#categoryyAlias").val());
+        if($('#auth').prop('checked')) {
+            formData.append('auth', "1");
+        } else {
+            formData.append('auth', "0");
+        }
+        $.ajax({
+            url : '/blog/category/save',
+            type : 'POST',
+            data : formData,
+            processData: false,
+            contentType: false,
+            success : function(answer) {
+                if (answer.error) swal.fire("Error while save category");
+                else swal.fire("Category saved");
+            }
+        });
+    }
+    {{ if gt .Category.Id 0 }}
+    function deleteCategory() {
+        var formData = new FormData();
+        formData.append('category', {{ .Category.Id }});
+        formData.append('action', "delete");
+        $.ajax({
+            url : '/blog/category/save',
+            type : 'POST',
+            data : formData,
+            processData: false,
+            contentType: false,
+            success : function(answer) {
+                if (answer.error) swal.fire("Error while delete category");
+                else {
+                    window.location.replace("/blog/");
+                }
+            }
+        });
+    }
+    {{ end }}
+</script>
+{{template "bottom.html" .}}
