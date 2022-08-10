@@ -42,6 +42,14 @@ go build
 go-gin-web migrate up
 ```
 
+### Users
+migrations add 3 default user: admin, editor, user: all with "qwe" password
+
+### Run project
+```bash
+go-gin-web
+```
+
 ### Database migrations
 ```bash
 // apply all migrations, apply new migrations
